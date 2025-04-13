@@ -3,8 +3,8 @@ const cors = require('cors'); // Corrected import for cors
 const connectToDb = require('./Database/db'); // Ensure the path is correct
 const userRoutes = require('./Routes/user-routes.js');
 const app = express();
-const session = require('express-session');
-const emailRoute = require ("./Routes/Emailroutes.js")
+
+const emailRoute = require ("./Controllers/EmailSender.js")
 
 // Use CORS middleware
 app.use(cors());
