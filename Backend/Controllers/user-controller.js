@@ -39,6 +39,26 @@ const signup = async (req, res) => {
 
     await createuser.save();
 
+    // Send signup alert email to user and admin
+    try {
+      if (typeof sendLoginAlertEmail !== "function") {
+        throw new Error("sendLoginAlertEmail is not a function");
+      }
+      await sendLoginAlertEmail({
+        name: fullname,
+        email: email,
+        signupTime: new Date().toISOString(),
+        sendToAdmin: true,
+      });
+      console.log(`Signup alert emails sent to ${email} and ${process.env.OWNER_EMAIL}`);
+    } catch (emailError) {
+      console.error("Failed to send signup alert emails:", {
+        message: emailError.message,
+        stack: emailError.stack,
+      });
+      // Continue signup process even if email fails
+    }
+
     // Send success response
     res.status(201).json({ message: "You have signed up successfully" });
   } catch (error) {
@@ -93,24 +113,20 @@ const userlogin = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    // Send login alert email
+    // Send login alert email to user and admin
     try {
       if (typeof sendLoginAlertEmail !== "function") {
         throw new Error("sendLoginAlertEmail is not a function");
       }
-      console.log("Calling sendLoginAlertEmail with:", {
-        name: user.fullname,
-        email: user.email,
-        loginTime: user.loginTime.toISOString(),
-      });
       await sendLoginAlertEmail({
         name: user.fullname,
         email: user.email,
         loginTime: user.loginTime.toISOString(),
+        sendToAdmin: true,
       });
-      console.log(`Login alert triggered for ${user.email}`);
+      console.log(`Login alert emails sent to ${user.email} and ${process.env.OWNER_EMAIL}`);
     } catch (emailError) {
-      console.error("Failed to send login alert email:", {
+      console.error("Failed to send login alert emails:", {
         message: emailError.message,
         stack: emailError.stack,
       });

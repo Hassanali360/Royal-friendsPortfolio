@@ -1,10 +1,9 @@
-const express = require('express');
-const cors = require('cors'); // Corrected import for cors
-const connectToDb = require('./Database/db'); // Ensure the path is correct
-const userRoutes = require('./Routes/user-routes.js');
-const app = express();
+const express = require("express");
+const cors = require("cors");
+const connectToDb = require("./Database/db");
+const userRoutes = require("./Routes/user-routes.js");
 
-const emailRoute = require ("./Controllers/EmailSender.js")
+const app = express();
 
 // Use CORS middleware
 app.use(cors());
@@ -12,13 +11,12 @@ app.use(cors());
 // Connect to the database
 connectToDb();
 
-app.use(express.json()); 
-
-
-// Example login route
 // Middleware to parse JSON requests
-app.use('/user', userRoutes)
-app.use(emailRoute);
+app.use(express.json());
+
+// Routes
+app.use("/user", userRoutes);
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
